@@ -14,7 +14,7 @@ $ip = readline("IP: \n"); //IP
 $protocolo = null;
 echo $cls;
 $sair = false;
-
+$num = 0;
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -37,7 +37,7 @@ while ($protocolo != 3) {
             } else {
                 echo "SOCKET UDP create OK!\n";
             }
-            echo "A ligar ao servidor'$ipserver' na porta'$portserver'...\n";
+            echo "A ligar ao servidor'$ip' na porta'$port'...\n";
 
             while (1) {
                 //Opção de envio onde as mensagens são pedidas ao user
@@ -47,13 +47,13 @@ while ($protocolo != 3) {
                 $input = "Mensagem $num UDP do cliente";
                 echo "Mensagem enviada: '$input'\n";
                 //Enviar mensagem ao servidor
-                if (socket_sendto($socket, $input, strlen($input), 0, $ipserver, $portserver) < 0) {
+                if (socket_sendto($socket, $input, strlen($input), 0, $ip, $port) < 0) {
                     $errorcode = socket_last_error();
                     echo "socket_write() - SENDTO - failed. reason: " . socket_strerror($errorcode) . "\n";
                 }
                 //Para desenvolver: validação de receção...
 
-                $resposta = socket_recvfrom($socket, $input, 512, 0, $ipserver, $portserver) < 0;
+                $resposta = socket_recvfrom($socket, $input, 512, 0, $ip, $port) < 0;
                 echo "Resposta do servidor: " . $resposta;
             }
 
@@ -92,8 +92,16 @@ while ($protocolo != 3) {
                 }
 
                 while ($out = socket_read($socket,8192)){
-                    //echo "Receive Server Return Message Succesfully!\n:"
-                    //echo  "Received Message: ",$out;
+                   // echo "Receive Server Return Message Succesfully!\n:";
+                    $counter=1;
+                    for($i=0;$i<strlen($User)-1;$i++){
+                        if($User[$i]==$out[$i]){
+                            $counter++;
+                        }
+                    }
+                    if ($counter!=strlen($User)){
+                        echo  $out;
+                    }
                 }
 
 

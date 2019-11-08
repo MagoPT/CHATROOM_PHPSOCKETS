@@ -3,9 +3,9 @@ set_time_limit(0);
 
 $cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
 echo $cls;
-$ip='127.0.0.1';
+$ip = getHostByName(getHostName());
 $port=42069;
-$msg="Mensagem UDP do servidor";
+$msg="Mensagem UDP do servidor\n";
 $protocolo = null;
 $sair = false;
 function protocolo()
@@ -55,7 +55,8 @@ while ($sair !=true) {
                 echo "Mensagem UDP Recebida de: ".$remote_ip.$remote_port."-->".$buf;
 
                 //Enviar dados de volta ao cliente
-                socket_sendto($sock,$msg,$buf,100,0,$remote_ip,$remote_port);
+                //socket_sendto($sock,$msg,$buf,100,0,$remote_ip,$remote_port);
+                socket_sendto($sock,$msg,512,100,$remote_ip,$remote_port);
             }
             socket_close($sock);
             break;
@@ -77,12 +78,12 @@ while ($sair !=true) {
                     break;
                 } else{
                     //$msg = "Mensagem recebida com sucesso do cliente\n";
-                    socket_write($msgsock,$msg,strlen($msg));
+                    $talkback = "$buf";
+                    socket_write($msgsock,$talkback,strlen($talkback));
 
                     //echo "Conexão bem sucedida\n";
                     $buf = socket_read($msgsock,8192);
 
-                    $talkback = "$buf";
                     echo  $talkback;
                 }
                 //echo $buf;
