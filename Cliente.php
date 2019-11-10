@@ -15,6 +15,8 @@ $protocolo = null;
 echo $cls;
 $sair = false;
 $num = 0;
+$counter = 0;
+$client="Bem-vindo ao servidor dos Laneiros";
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -31,30 +33,32 @@ while ($protocolo != 3) {
     switch ($protocolo) {
 
         case 1:
-            $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-            if ($socket < 0) {
-                echo "socket_create() ERRP: " . socket_strerror($socket) . "\n";
-            } else {
+
+            $socket = socket_create(AF_INET,SOCK_DGRAM,SOL_UDP);
+            if($socket < 0){
+                echo  "socket_create() ERRP: ".socket_strerror($socket)."\n";
+            } else{
                 echo "SOCKET UDP create OK!\n";
             }
             echo "A ligar ao servidor'$ip' na porta'$port'...\n";
 
-            while (1) {
-                //Opção de envio onde as mensagens são pedidas ao user
-                //echo "Enter a mensage to send: "
-                //$input = fgets(STDIN);
-                $num = $num + 1;
-                $input = "Mensagem $num UDP do cliente";
-                echo "Mensagem enviada: '$input'\n";
-                //Enviar mensagem ao servidor
-                if (socket_sendto($socket, $input, strlen($input), 0, $ip, $port) < 0) {
-                    $errorcode = socket_last_error();
-                    echo "socket_write() - SENDTO - failed. reason: " . socket_strerror($errorcode) . "\n";
+            while (1)
+            {
+                if($counter==0){
+                    //$resposta=socket_recvfrom($socket,$input,512,0,$ip,$port)<0;
+                    //echo "Resposta do servidor: ".$resposta;
+                    echo $client."\n";
+                    echo "Para sair click q\n";
+                    $counter++;
                 }
-                //Para desenvolver: validação de receção...
-
-                $resposta = socket_recvfrom($socket, $input, 512, 0, $ip, $port) < 0;
-                echo "Resposta do servidor: " . $resposta;
+                $input =readline("Tu: ");
+                if($input=='q') { exit; }
+                $send="[".date("H:i:s")."]".$User.":".$input;
+                if(socket_sendto($socket,$send,strlen($send),0,$ip,$port)<0)
+                {
+                    $errorcode = socket_last_error();
+                    echo "socket_write() - SENDTO - failed. reason: ".socket_strerror($errorcode)."\n";
+                }
             }
 
             echo "Turn Off socket...\n";
@@ -63,48 +67,45 @@ while ($protocolo != 3) {
             break;
 
         case 2:
-            while ($sair!=true) {
-                $socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-                if($socket<0){
-                    echo  "socket_create() ERRO: ".socket_strerror($socket)."\n";
-                } else {
-                    //echo "socket create OK.\n";
-                }
+            echo "Para sair click q\n";
+            $ticker = "Joined the server";
+            while(1)
+            {
 
-                //echo  "A ligar ao servidor '$ip' na porta '$port'...\n";
+                $socket= socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
+                if($socket===false)
+                {
+                    echo "Socket creation failed!";
+                }
                 $result = socket_connect($socket,$ip,$port);
-                if ($result <0 ){
-                    echo "socket_connect() ERRO: ($result)".socket_strerror($result)."\n";
-                } else{
-                  //  echo  "Ligação (connect) OK\n";
+                if($result===false)
+                {
+                    echo "Socket connection failed!";
                 }
-
-                $Mensagem = readline("$User: ");
-
-                $in = $User.": $Mensagem\r\n";
-                $out='';
-
-                if(!socket_write($socket,$in,strlen($in))){
-                    echo "socket_write() failed. reason: ".socket_strerror($socket)."\n";
-                }else{
-                    //echo "Mensagem enviada ao servidor com sucesso!\n";
-                    //echo "Mensagem enviada: $in \n";
-                }
-
-                while ($out = socket_read($socket,8192)){
-                   // echo "Receive Server Return Message Succesfully!\n:";
-                    $counter=1;
-                    for($i=0;$i<strlen($User)-1;$i++){
-                        if($User[$i]==$out[$i]){
-                            $counter++;
-                        }
+                else {
+                    if($counter==0){
+                        $out = socket_read($socket,1024);
+                        echo $out."\n";
+                        $counter++;
                     }
-                    if ($counter!=strlen($User)){
-                        echo  $out;
-                    }
+                    socket_write($socket,"[".date("H:i:s")."]$User : $ticker",1024);
+                    $a = strlen($User);
+                    /* if (strlen($out)!=0) {
+                         for ($i = 0; $i < $a; $i++) {
+                             if ($User[$i] == $out[$i]) {
+                                 $counter++;
+                             }
+                         }
+                     }
+
+                     if ($counter==$a) {
+                         echo "$out\n";
+                     }
+                     */
+                    $ticker = readline("Tu: ");
+                    if($ticker=='q') { exit; }
+
                 }
-
-
             }
 
             echo "Turn Off Socket...\n";

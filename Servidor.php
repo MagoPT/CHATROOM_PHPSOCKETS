@@ -5,9 +5,12 @@ $cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
 echo $cls;
 $ip = getHostByName(getHostName());
 $port=42069;
-$msg="Mensagem UDP do servidor\n";
+$msg="Bem-vindo ao servidor dos laneiros\n";
 $protocolo = null;
 $sair = false;
+$buf="";
+$i=0;
+$client="Bem-vindo ao servidor dos Laneiros";
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -45,18 +48,29 @@ while ($sair !=true) {
     echo $cls;
     switch ($protocolo) {
         case 1:
-            $sock = socket_CreateBind($protocolo, $ip, $port);
+            if(($sock = socket_create(AF_INET,SOCK_DGRAM,SOL_UDP))<0) {
+                echo "Socket_Create() ERRO :" . socket_strerror($sock) . "\n";
+            } else{
+                echo "Socket UDP create OK!\n";
+            }
+            if(($ret=socket_bind($sock,$ip,$port))<0){
+                echo "Socket_bind() ERRO :".socket_strerror($ret)."\n";
+            } else{
+                echo "Socket UDP bind OK!\n";
+            }
+
+//Comunicação simplificada com o cliente
+            echo "\nA agurdar por transmissão ... \n";
             while (1)
             {
-                echo "\nA agurdar por transmissão ... \n";
+
 
                 //Receber Dadods
-                $r = socket_recvfrom($sock,$buf,512,0,$remote_ip,$remote_port);
-                echo "Mensagem UDP Recebida de: ".$remote_ip.$remote_port."-->".$buf;
+                $r = socket_recvfrom($sock,$buf,512,0,$ip,$port);
+                echo $buf."\n";
 
                 //Enviar dados de volta ao cliente
-                //socket_sendto($sock,$msg,$buf,100,0,$remote_ip,$remote_port);
-                socket_sendto($sock,$msg,512,100,$remote_ip,$remote_port);
+                socket_sendto($sock,$msg,100,0,$ip,$port);
             }
             socket_close($sock);
             break;
@@ -72,23 +86,18 @@ while ($sair !=true) {
 
             echo "«« Servidor à espera de ligações »» \n";
             $count = 0;
-            do{
-                if (($msgsock = socket_accept($sock))<0){
-                    echo "socket_accept() Falhou: Motivo: ".socket_strerror($msgsock)."\n";
-                    break;
-                } else{
-                    //$msg = "Mensagem recebida com sucesso do cliente\n";
-                    $talkback = "$buf";
-                    socket_write($msgsock,$talkback,strlen($talkback));
+            while(1)
+            {
+                $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming
+	connection\n");
+                socket_write($spawn[$i],$client,9080);
+                $input = socket_read($spawn[$i],1024);
+                //$client = $input;
 
-                    //echo "Conexão bem sucedida\n";
-                    $buf = socket_read($msgsock,8192);
+                echo $input ."\n";
 
-                    echo  $talkback;
-                }
-                //echo $buf;
-                socket_close($msgsock);
-            } while (true);
+                socket_close($spawn[$i]);
+            }
             socket_close($sock);
 //socket_shutdown($sock);
             break;
