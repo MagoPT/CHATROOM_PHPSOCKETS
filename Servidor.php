@@ -10,7 +10,9 @@ $protocolo = null;
 $sair = false;
 $buf="";
 $i=0;
+$sv="a";
 $client="Bem-vindo ao servidor dos Laneiros";
+$conversa=$cls;
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -42,7 +44,38 @@ function socket_CreateBind($protocolo,$ip,$port){
     return $sock;
 }
 
+function emoji_badwords($str){
+    $str_explode = explode(" ", $str);
+    $output="";
+    $count = 0;
 
+    for($i = 0; $i < count($str_explode);$i++){
+        if($str_explode[$i] == ":smile:"){
+            $str_explode[$i] = ":)";
+        }
+        else if($str_explode[$i] == ":cry:"){
+            $str_explode[$i] = ":'(";
+        }
+        else if($str_explode[$i] == ":sad:"){
+            $str_explode[$i] = ":(";
+        }
+        else if($str_explode[$i] == "caralho"){
+            $str_explode[$i] = "c.....o(BadWord)";
+        }
+        else if($str_explode[$i] == "merda"){
+            $str_explode[$i] = "m...a(BadWord)";
+        }
+        else if($str_explode[$i] == "puta"){
+            $str_explode[$i] = "p..a(BadWord)";
+        }
+        else if($str_explode[$i] == "cabrão"){
+            $str_explode[$i] = "c....o(BadWord)";
+        }
+
+        $output=$output.$str_explode[$i]." ";
+    }
+    return $output."\n";
+}
 //Comunicação simplificada com o cliente
 while ($sair !=true) {
     echo $cls;
@@ -85,18 +118,28 @@ while ($sair !=true) {
             }
 
             echo "«« Servidor à espera de ligações »» \n";
-            $count = 0;
-            while(1)
+            while($sv=="a")
             {
                 $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming
 	connection\n");
-                socket_write($spawn[$i],$client,9080);
                 $input = socket_read($spawn[$i],1024);
+                //$ip = socket_select();
                 //$client = $input;
-
-                echo $input ."\n";
-
-                socket_close($spawn[$i]);
+                if($input=="r"){
+                    socket_write($spawn[$i],$conversa,9080);
+                    socket_close($spawn[$i]);
+                }
+                elseif($input=="close"){
+                    $sv="b";
+                    $sair=true;
+                }
+                else {
+                    $final=emoji_badwords($input);
+                    echo $final;
+                    $conversa = $conversa . $final;
+                    socket_write($spawn[$i], $conversa, 9080);
+                    socket_close($spawn[$i]);
+                }
             }
             socket_close($sock);
 //socket_shutdown($sock);

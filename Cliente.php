@@ -16,6 +16,7 @@ echo $cls;
 $sair = false;
 $num = 0;
 $counter = 0;
+$send=true;
 $client="Bem-vindo ao servidor dos Laneiros";
 function protocolo()
 {
@@ -83,27 +84,20 @@ while ($protocolo != 3) {
                     echo "Socket connection failed!";
                 }
                 else {
-                    if($counter==0){
-                        $out = socket_read($socket,1024);
-                        echo $out."\n";
-                        $counter++;
+                    if($send==true) {
+                        socket_write($socket, "\n[" . date("H:i:s") . "]$User : $ticker", 1024);
                     }
-                    socket_write($socket,"[".date("H:i:s")."]$User : $ticker",1024);
-                    $a = strlen($User);
-                    /* if (strlen($out)!=0) {
-                         for ($i = 0; $i < $a; $i++) {
-                             if ($User[$i] == $out[$i]) {
-                                 $counter++;
-                             }
-                         }
-                     }
+                    else{
+                        $send=true;
+                        socket_write($socket,"r",1024);
+                    }
+                    $out = socket_read($socket,1024);
+                    echo $out."\n";
 
-                     if ($counter==$a) {
-                         echo "$out\n";
-                     }
-                     */
+                    $a = strlen($User);
                     $ticker = readline("Tu: ");
                     if($ticker=='q') { exit; }
+                    elseif ($ticker=='r'){$send=false;}
 
                 }
             }
