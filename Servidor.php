@@ -12,7 +12,8 @@ $buf="";
 $i=0;
 $sv="a";
 $client="Bem-vindo ao servidor dos Laneiros";
-$conversa=$cls;
+$conversa=[];
+array_push($conversa,$cls);
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -126,20 +127,33 @@ while ($sair !=true) {
                 //$ip = socket_select();
                 //$client = $input;
                 if($input=="r"){
-                    socket_write($spawn[$i],$conversa,9080);
-                    socket_close($spawn[$i]);
+                    for ($a = 0;$a<=sizeof($conversa);$a++) {
+                        if ($a==sizeof($conversa)) {
+                            socket_write($spawn[$i], "final_array", 9080);
+                        }
+                        else socket_write($spawn[$i], $conversa[$a], 9080);
+                    }
                 }
                 elseif($input=="close"){
                     $sv="b";
                     $sair=true;
+                    socket_write($spawn[$i], "servidor encerrado", 9080);
                 }
                 else {
                     $final=emoji_badwords($input);
                     echo $final;
-                    $conversa = $conversa . $final;
-                    socket_write($spawn[$i], $conversa, 9080);
-                    socket_close($spawn[$i]);
+
+                        array_push($conversa, $final);
+
+                    //$conversa = $conversa . $final;
+                    for ($a = 0;$a<=sizeof($conversa);$a++) {
+                        if ($a==sizeof($conversa)) {
+                            socket_write($spawn[$i], "final_array", 9080);
+                        }
+                        else socket_write($spawn[$i], $conversa[$a], 9080);
+                    }
                 }
+                socket_close($spawn[$i]);
             }
             socket_close($sock);
 //socket_shutdown($sock);

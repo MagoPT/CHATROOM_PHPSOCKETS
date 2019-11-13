@@ -18,6 +18,7 @@ $num = 0;
 $counter = 0;
 $send=true;
 $client="Bem-vindo ao servidor dos Laneiros";
+$out=[];
 function protocolo()
 {
     echo("Por favor escolha o protocolo");
@@ -84,15 +85,39 @@ while ($protocolo != 3) {
                     echo "Socket connection failed!";
                 }
                 else {
-                    if($send==true) {
-                        socket_write($socket, "\n[" . date("H:i:s") . "]$User : $ticker", 1024);
+                    if($ticker=="close"){
+                        socket_write($socket,"close",1024);
+                    }
+                    elseif($send==true) {
+                        socket_write($socket, "[" . date("H:i:s") . "]$User : $ticker", 1024);
                     }
                     else{
                         $send=true;
                         socket_write($socket,"r",1024);
                     }
-                    $out = socket_read($socket,1024);
-                    echo $out."\n";
+                    $c=false;
+                    while (!$c) {
+                            $output = socket_read($socket, 1024);
+                        if ($output=="final_array"){
+                            $c=true;
+                        }
+                        else array_push($out,$output);
+                    }
+                    $out = array_reverse($out);
+                    $max20= sizeof($out);
+                    for ($c = sizeof($out);$c >= 0;$c--) {
+                        if($c==0){
+                            echo $out[$c].$c;
+                            echo "|___________________________|\n";
+                        }
+                        else if($c==sizeof($out)){
+                            echo $out[$c];
+                            echo "|---------------------------|\n";
+                        }
+                        else{
+                            echo $out[$c].$c;
+                        };
+                    };
 
                     $a = strlen($User);
                     $ticker = readline("Tu: ");
