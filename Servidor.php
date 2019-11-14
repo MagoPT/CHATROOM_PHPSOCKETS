@@ -146,11 +146,16 @@ while ($sair !=true) {
                         array_push($conversa, $final);
 
                     //$conversa = $conversa . $final;
+                    //echo "start\n";
                     for ($a = 0;$a<=sizeof($conversa);$a++) {
                         if ($a==sizeof($conversa)) {
                             socket_write($spawn[$i], "final_array", 9080);
+                            echo "\n";
                         }
-                        else socket_write($spawn[$i], $conversa[$a], 9080);
+                        else{
+                            socket_write($spawn[$i], $conversa[$a], 9080);
+                            echo ".";
+                        };
                     }
                 }
                 socket_close($spawn[$i]);
