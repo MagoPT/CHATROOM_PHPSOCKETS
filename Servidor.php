@@ -4,8 +4,8 @@ set_time_limit(0);
 $cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
 echo $cls;
 $ip = getHostByName(getHostName());
-$port=42069;
 $msg="Bem-vindo ao servidor dos laneiros\n";
+$port=readline("Porta: ");
 $protocolo = null;
 $sair = false;
 $buf="";
@@ -92,20 +92,57 @@ while ($sair !=true) {
                 echo "Socket UDP bind OK!\n";
             }
 
+            echo "\nIP: ".$ip;
+            echo "\nPorta: ".$port;
 //Comunicação simplificada com o cliente
-            echo "\nA agurdar por transmissão ... \n";
+            echo "\n\nA agurdar por transmissão ... \n";
             while (1)
             {
+                $input = socket_recvfrom($sock,$buf,512,0,$ip,$port);
+                if($buf=="r"){
+                    $send = $cls . "|------------------------------|\n";
+                    $ze = array_reverse($conversa);
+                    if (sizeof($conversa) < 20) {
+                        for ($a = 0; $a < sizeof($conversa);$a++) {
+                            $send = $send . $conversa[$a];
+                        }
+                    }else{
+                        for ($a = 20; $a >= 0;$a--) {
+                            $send = $send . $ze[$a];
+                        }
+                    }
+                }
+                elseif($buf=="close"){
+                    $sv="b";
+                    $sair=true;
+                    socket_sendto($sock,"servidor encerrado\n", 100,0,$ip,$port);
+                }
+                else {
+                    $final = emoji_badwords($buf);
+                    echo $final;
+
+                    array_push($conversa, $final);
+
+                    //$conversa = $conversa . $final;
+                    $send = $cls . "|------------------------------|\n";
+                    $ze = array_reverse($conversa);
+                    if (sizeof($conversa) <= 20) {
+                        for ($a = 0; $a < sizeof($conversa);$a++) {
+                            $send = $send . $conversa[$a];
+                        }
 
 
-                //Receber Dadods
-                $r = socket_recvfrom($sock,$buf,512,0,$ip,$port);
-                echo $buf."\n";
-
-                //Enviar dados de volta ao cliente
-                socket_sendto($sock,$msg,100,0,$ip,$port);
+                    }else{
+                        for ($a = 20; $a >= 0;$a--) {
+                            $send = $send . $ze[$a];
+                        }
+                    }
+                }
+                $send= $send."|______________________________|\n";
+                socket_sendto($sock,$send, strlen($send),0,$ip,$port);
             }
             socket_close($sock);
+//socket_shutdown($sock);
             break;
 
         case 2:
@@ -116,8 +153,9 @@ while ($sair !=true) {
             } else{
                 echo "socket listen OK\n";
             }
-
-            echo "«« Servidor à espera de ligações »» \n";
+            echo "\nIP: ".$ip;
+            echo "\nPorta: ".$port;
+            echo "\n\n«« Servidor à espera de ligações »» \n";
             while($sv=="a")
             {
                 $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming
@@ -126,19 +164,19 @@ while ($sair !=true) {
                 //$ip = socket_select();
                 //$client = $input;
                 if($input=="r"){
-                        $send = $cls . "|------------------------------|\n";
-                        $ze = array_reverse($conversa);
-                        if (sizeof($conversa) < 20) {
-                            for ($a = 0; $a < sizeof($conversa);$a++) {
-                                $send = $send . $conversa[$a];
-                            }
-
-
-                        }else{
-                            for ($a = 20; $a >= 0;$a--) {
-                                $send = $send . $ze[$a];
-                            }
+                    $send = $cls . "|------------------------------|\n";
+                    $ze = array_reverse($conversa);
+                    if (sizeof($conversa) < 20) {
+                        for ($a = 0; $a < sizeof($conversa);$a++) {
+                            $send = $send . $conversa[$a];
                         }
+
+
+                    }else{
+                        for ($a = 20; $a >= 0;$a--) {
+                            $send = $send . $ze[$a];
+                        }
+                    }
                 }
                 elseif($input=="close"){
                     $sv="b";
@@ -154,17 +192,17 @@ while ($sair !=true) {
                     //$conversa = $conversa . $final;
                     $send = $cls . "|------------------------------|\n";
                     $ze = array_reverse($conversa);
-                        if (sizeof($conversa) <= 20) {
+                    if (sizeof($conversa) <= 20) {
                         for ($a = 0; $a < sizeof($conversa);$a++) {
                             $send = $send . $conversa[$a];
                         }
 
 
                     }else{
-                            for ($a = 20; $a >= 0;$a--) {
-                                $send = $send . $ze[$a];
-                            }
+                        for ($a = 20; $a >= 0;$a--) {
+                            $send = $send . $ze[$a];
                         }
+                    }
                 }
                 $send= $send."|______________________________|\n";
                 socket_write($spawn[$i], $send, 9080);
