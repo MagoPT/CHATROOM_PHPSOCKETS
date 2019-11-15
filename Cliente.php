@@ -5,8 +5,21 @@ set_time_limit(0);
 $cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
 
 echo $cls;
-echo ('Bem-Vindo a ChatRoom "OS LANEIROS"');                        //Mensagem de boas vindas
-echo ("\n");
+$art = '  
+================================================.
+     .-.   .-.     .--.                         |
+    | OO| | OO|   / _.-\' .-.   .-.  .-.   .\'\'.  |
+    |   | |   |   \  \'-. \'-\'   \'-\'  \'-\'   \'..\'  |
+    \'^^^\' \'^^^\'    \'--\'                         |
+===============.  .-.  .================.  .-.  |
+ Bem-Vindo a   | |   | |BY:             |  \'-\'  |
+   CHATROOM    | |   | |   Duarte Cruz  |       |
+      OS       | \':-:\' |      &         |  .-.  |
+   Laneiros    |  \'-\'  |   Bernardo G.  |  \'-\'  |
+===============\'       \'================\'       |
+         ';
+
+echo $art."\n\n";//Mensagem de boas vindas
 
 $User = readline("Nome de Utilizador: "); //UserName
 $port = readline("Porta: \n"); //Porta
@@ -63,10 +76,13 @@ while ($protocolo != 4) {
                         if ($input == 'q') {
                             $input = $left;
                         }
-                        if ($input=="r"){
+                        elseif ($input=="r"){
                             $send="r";
                         }
-                        if ($input=="close"){
+                        elseif ($input=="b"){
+                            $send="b";
+                        }
+                        elseif ($input=="close"){
                             $send="close";
                         }
                         else {
@@ -115,6 +131,9 @@ while ($protocolo != 4) {
                     }
                     elseif ($ticker=="r"){
                         socket_write($socket,"r",1024);
+                    }
+                    elseif ($ticker=="b"){
+                        socket_write($socket,"b",1024);
                     }
                     else{
                         socket_write($socket, "[" . date("H:i:s") . "]$User : $ticker", 1024);

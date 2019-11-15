@@ -3,6 +3,26 @@ set_time_limit(0);
 
 $cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
 echo $cls;
+$art = '  
+      _=====_                               _=====_
+     / _____ \                             / _____ \
+   +.-\'_____\'-.---------------------------.-\'_____\'-.+
+  /   |     |  \'.        LANEIROS       .\'  |  _  |   \
+ / ___| /|\ |___ \                     / ___| /_\ |___ \
+/ |      |      | ;  __           _   ; | _         _ | ;
+| | <---   ---> | | |__|         |_:> | ||_|       (_)| |
+| |___   |   ___| ; CHAT         ROOM ; |___       ___| ;
+|\    | \|/ |    /  _     ___      _   \    | (X) |    /|
+| \   |_____|  .\',\'" "\', |___|  ,\'" "\', \'.  |_____|  .\' |
+|  \'-.______.-\' /       \SERVER/       \  \'-._____.-\'   |
+|               |       |------|       |                |
+|              /\       /      \       /\               |
+|             /  \'.___.\'        \'.___.\'  \              |
+|            /                            \             |
+ \          /                              \           /
+  \________/                                \_________/
+                   ';
+echo $art."\n\n";
 $ip = getHostByName(getHostName());
 $msg="Bem-vindo ao servidor dos laneiros\n";
 $port=readline("Porta: ");
@@ -112,6 +132,19 @@ while ($sair !=true) {
                         }
                     }
                 }
+                if($buf=="b"){
+                    $send = $cls . "|------------------------------|\n";
+                    $ze = array_reverse($conversa);
+                    if (sizeof($conversa) < 25) {
+                        for ($a = 0; $a < sizeof($conversa);$a++) {
+                            $send = $send . $conversa[$a];
+                        }
+                    }else{
+                        for ($a = 25; $a >= 5;$a--) {
+                            $send = $send . $ze[$a];
+                        }
+                    }
+                }
                 elseif($buf=="close"){
                     $sv="b";
                     $sair=true;
@@ -178,11 +211,27 @@ while ($sair !=true) {
                         }
                     }
                 }
+                elseif($input=="b"){
+                    $send = $cls . "|------------------------------|\n";
+                    $ze = array_reverse($conversa);
+                    if (sizeof($conversa) < 25) {
+                        for ($a = 0; $a < sizeof($conversa);$a++) {
+                            $send = $send . $conversa[$a];
+                        }
+
+
+                    }else{
+                        for ($a = 25; $a >= 5;$a--) {
+                            $send = $send . $ze[$a];
+                        }
+                    }
+                }
                 elseif($input=="close"){
                     $sv="b";
                     $sair=true;
                     socket_write($spawn[$i], "servidor encerrado", 9080);
                 }
+
                 else {
                     $final = emoji_badwords($input);
                     echo $final;
