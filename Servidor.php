@@ -152,7 +152,6 @@ while ($sair !=true) {
                     array_push($conversa, $final);
 
                     //$conversa = $conversa . $final;
-<<<<<<< HEAD
                     $send = $cls . "|------------------------------|\n";
                     $ze = array_reverse($conversa);
                         if (sizeof($conversa) <= 20) {
@@ -166,19 +165,6 @@ while ($sair !=true) {
                                 $send = $send . $ze[$a];
                             }
                         }
-=======
-                    //echo "start\n";
-                    for ($a = 0;$a<=sizeof($conversa);$a++) {
-                        if ($a==sizeof($conversa)) {
-                            socket_write($spawn[$i], "final_array", 9080);
-                            echo "\n";
-                        }
-                        else{
-                            socket_write($spawn[$i], $conversa[$a], 9080);
-                            echo ".";
-                        };
-                    }
->>>>>>> master
                 }
                 $send= $send."|______________________________|\n";
                 socket_write($spawn[$i], $send, 9080);
