@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b46fcc77-c5d8-40ff-b4de-40e6de446504" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cliente.php" beforeDir="false" afterPath="$PROJECT_DIR$/Cliente.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor.php" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,6 +36,7 @@
     </expand>
     <select />
   </component>
+<<<<<<< HEAD
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
@@ -75,6 +76,11 @@
       </list>
     </option>
   </component>
+=======
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+>>>>>>> master
   <component name="ProjectConfigurationFiles">
     <option name="files">
       <list>
@@ -90,15 +96,6 @@
   </component>
   <component name="ProjectId" id="1TTgxKTUwd4NDZkS8DFUpyetiXX" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane" />
-      <pane id="Scope" />
-    </panes>
-  </component>
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -160,6 +157,7 @@
       <workItem from="1573381840443" duration="6217000" />
       <workItem from="1573489745520" duration="4599000" />
       <workItem from="1573503435529" duration="2607000" />
+<<<<<<< HEAD
       <workItem from="1573677349908" duration="4813000" />
       <workItem from="1573763290551" duration="1395000" />
       <workItem from="1573839413692" duration="2290000" />
@@ -239,5 +237,28 @@
         </state>
       </provider>
     </entry>
+=======
+      <workItem from="1573677349908" duration="4214000" />
+      <workItem from="1573727256093" duration="1868000" />
+      <workItem from="1573729256152" duration="725000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+>>>>>>> master
   </component>
 </project>
