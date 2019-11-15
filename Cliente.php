@@ -71,6 +71,7 @@ while ($protocolo != 3) {
         case 2:
             echo "Para sair click q\n";
             $ticker = "Joined the server";
+            $left="Left the server";
             while(1)
             {
 
@@ -88,41 +89,26 @@ while ($protocolo != 3) {
                     if($ticker=="close"){
                         socket_write($socket,"close",1024);
                     }
-                    elseif($send==true) {
-                        socket_write($socket, "[" . date("H:i:s") . "]$User : $ticker", 1024);
+                    elseif ($ticker=="q"){
+                        socket_write($socket, "[" . date("H:i:s") . "]$User : $left", 1024);
+                        $sair=true;
                     }
-                    else{
-                        $send=true;
+                    elseif ($ticker=="r"){
                         socket_write($socket,"r",1024);
                     }
-                    $c=false;
-                    while (!$c) {
-                            $output = socket_read($socket, 1024);
-                        if ($output=="final_array"){
-                            $c=true;
-                        }
-                        else array_push($out,$output);
+                    else{
+                        socket_write($socket, "[" . date("H:i:s") . "]$User : $ticker", 1024);
                     }
-                    $out = array_reverse($out);
-                    $max20= sizeof($out);
-                    for ($c = sizeof($out);$c >= 0;$c--) {
-                        if($c==0){
-                            echo $out[$c].$c;
-                            echo "|___________________________|\n";
-                        }
-                        else if($c==sizeof($out)){
-                            echo $out[$c];
-                            echo "|---------------------------|\n";
-                        }
-                        else{
-                            echo $out[$c].$c;
-                        };
-                    };
 
+                    $c=false;
+                    $output = socket_read($socket, 1024);
+                    echo $output;
+
+                    if($sair) { exit; }
                     $a = strlen($User);
                     $ticker = readline("Tu: ");
-                    if($ticker=='q') { exit; }
-                    elseif ($ticker=='r'){$send=false;}
+
+                    //if ($ticker=='r'){$send=false;}
 
                 }
             }
