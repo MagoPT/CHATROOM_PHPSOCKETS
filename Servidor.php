@@ -1,7 +1,7 @@
 <?php
 set_time_limit(0);
 
-$cls = chr(27).chr(91).'H'.chr(27).chr(91).'J';
+$cls = chr(27).chr(91).'H'.chr(27).chr(91).'J'; //codigo equivalente ao cls
 echo $cls;
 $art = '  
       _=====_                               _=====_
@@ -21,11 +21,12 @@ $art = '
 |            /                            \             |
  \          /                              \           /
   \________/                                \_________/
-                   ';
+                   '; //Desenho ASCII servidor
 echo $art."\n\n";
-$ip = getHostByName(getHostName());
-$msg="Bem-vindo ao servidor dos laneiros\n";
-$port=readline("Porta: ");
+$ip = getHostByName(getHostName()); //Automaticamente atribui o IP do servidor
+$msg="Bem-vindo ao servidor dos laneiros\n"; //Mensagem de boas vindas
+$port=readline("Porta: ");  //Inpout de porta
+//Declaração de variaveos
 $protocolo = null;
 $sair = false;
 $buf="";
@@ -33,7 +34,9 @@ $i=0;
 $sv="a";
 $client="Bem-vindo ao servidor dos Laneiros";
 $conversa=[];
-function protocolo()
+
+//Criação de Funções
+function protocolo()    //Menu Inicial
 {
     echo("Por favor escolha o protocolo");
     echo("\nProtocolo UDP - 1");
@@ -43,7 +46,8 @@ function protocolo()
     return $protocolo;
 }
 
-function socket_CreateBind($protocolo,$ip,$port){
+function socket_CreateBind($protocolo,$ip,$port) //socketBind
+{
     if($protocolo == 1){
         $protocol_type = SOL_UDP;
     }
@@ -64,7 +68,8 @@ function socket_CreateBind($protocolo,$ip,$port){
     return $sock;
 }
 
-function emoji_badwords($str){
+function emoji_badwords($str) //Filtro BadWords
+{
     $str_explode = explode(" ", $str);
     $output="";
     $count = 0;
@@ -96,11 +101,14 @@ function emoji_badwords($str){
     }
     return $output."\n";
 }
-//Comunicação simplificada com o cliente
-while ($sair !=true) {
-    echo $cls;
-    switch ($protocolo) {
-        case 1:
+
+
+while ($sair !=true) { //Inicio do Ciclo do Programa
+    echo $cls;  //reseta a tela
+    switch ($protocolo) { //Verifica o valor do Protocolo
+        case 1: //caso o porotocolo seja UDP
+
+            //conexão ao servidor via UDP
             if(($sock = socket_create(AF_INET,SOCK_DGRAM,SOL_UDP))<0) {
                 echo "Socket_Create() ERRO :" . socket_strerror($sock) . "\n";
             } else{
@@ -114,14 +122,15 @@ while ($sair !=true) {
 
             echo "\nIP: ".$ip;
             echo "\nPorta: ".$port;
-//Comunicação simplificada com o cliente
+
+            //Comunicação simplificada com o cliente
             echo "\n\nA agurdar por transmissão ... \n";
             while (1)
             {
-                $input = socket_recvfrom($sock,$buf,512,0,$ip,$port);
-                if($buf=="r"){
-                    $send = $cls . "|------------------------------|\n";
-                    $ze = array_reverse($conversa);
+                $input = socket_recvfrom($sock,$buf,512,0,$ip,$port); //Receber pacotes do cliente
+                if($buf=="r"){ //caso o cliente queira dar refresh a sua tela
+                    $send = $cls . "|------------------------------|\n"; //Inicio da sting da mensagem
+                    $ze = array_reverse($conversa); //reverse ao array conversa
                     if (sizeof($conversa) < 20) {
                         for ($a = 0; $a < sizeof($conversa);$a++) {
                             $send = $send . $conversa[$a];
@@ -132,7 +141,7 @@ while ($sair !=true) {
                         }
                     }
                 }
-                if($buf=="b"){
+                if($buf=="b"){ //Caso o cliente queira voltar atras na conversa
                     $send = $cls . "|------------------------------|\n";
                     $ze = array_reverse($conversa);
                     if (sizeof($conversa) < 25) {
@@ -145,18 +154,17 @@ while ($sair !=true) {
                         }
                     }
                 }
-                elseif($buf=="close"){
+                elseif($buf=="close"){ //Caso o cliente queira fechar o servidor
                     $sv="b";
                     $sair=true;
                     socket_sendto($sock,"servidor encerrado\n", 100,0,$ip,$port);
                 }
-                else {
-                    $final = emoji_badwords($buf);
-                    echo $final;
+                else { //Caso o cliente envie uma mensagem
+                    $final = emoji_badwords($buf); //filtrar mensagem
+                    echo $final; //echo da mensagem
 
-                    array_push($conversa, $final);
+                    array_push($conversa, $final); //Junção da mensagem ao historico
 
-                    //$conversa = $conversa . $final;
                     $send = $cls . "|------------------------------|\n";
                     $ze = array_reverse($conversa);
                     if (sizeof($conversa) <= 20) {
@@ -171,17 +179,17 @@ while ($sair !=true) {
                         }
                     }
                 }
-                $send= $send."|______________________________|\n";
-                socket_sendto($sock,$send, strlen($send),0,$ip,$port);
+                $send= $send."|______________________________|\n"; //finalização da mensagem
+                socket_sendto($sock,$send, strlen($send),0,$ip,$port); //Envio da mensagem final para o cliente
             }
-            socket_close($sock);
-//socket_shutdown($sock);
-            break;
+            socket_close($sock); //Fechar o spcket
+            //socket_shutdown($sock);
+            break;//acaba o ciclo UDP
 
-        case 2:
-            $sock = socket_CreateBind($protocolo,$ip,$port);
+        case 2: //Caso o Protocolo seja TCP
+            $sock = socket_CreateBind($protocolo,$ip,$port); //Criação do bind
 
-            if(($ret = socket_listen($sock,4))<0){
+            if(($ret = socket_listen($sock,4))<0){ //verificação da ligação
                 echo "socket_listen() ERRO :".socket_strerror($ret)."\n";
             } else{
                 echo "socket listen OK\n";
@@ -191,17 +199,14 @@ while ($sair !=true) {
             echo "\n\n«« Servidor à espera de ligações »» \n";
             while($sv=="a")
             {
-                $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming
-	connection\n");
-                $input = socket_read($spawn[$i],1024);
-                //$ip = socket_select();
-                //$client = $input;
-                if($input=="r"){
-                    $send = $cls . "|------------------------------|\n";
+                $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming connection\n"); //Verificação da conexão ao client
+                $input = socket_read($spawn[$i],1024); //Recebimento da mensagem do utilizador
+                if($input=="r"){ //caso o utilizador queira somente dar refresh a sua tela
+                    $send = $cls . "|------------------------------|\n"; //Inicio da sting que sera enviada ao cliente
                     $ze = array_reverse($conversa);
                     if (sizeof($conversa) < 20) {
                         for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
+                            $send = $send . $conversa[$a]; //concactenação da sting que sera enviada ao cliente
                         }
 
 
@@ -211,12 +216,12 @@ while ($sair !=true) {
                         }
                     }
                 }
-                elseif($input=="b"){
-                    $send = $cls . "|------------------------------|\n";
+                elseif($input=="b"){ //caso o utilizador queira verificar o historico da conversa
+                    $send = $cls . "|------------------------------|\n";//Inicio da sting que sera enviada ao cliente
                     $ze = array_reverse($conversa);
                     if (sizeof($conversa) < 25) {
                         for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
+                            $send = $send . $conversa[$a];//concactenação da sting que sera enviada ao cliente
                         }
 
 
@@ -226,21 +231,20 @@ while ($sair !=true) {
                         }
                     }
                 }
-                elseif($input=="close"){
+                elseif($input=="close"){ //caso o cliente queira fechar o cliente
                     $sv="b";
                     $sair=true;
-                    socket_write($spawn[$i], "servidor encerrado", 9080);
+                    socket_write($spawn[$i], "servidor encerrado\n", 9080);
                 }
 
-                else {
-                    $final = emoji_badwords($input);
-                    echo $final;
+                else { //caso o utilizador envie uma mensgaem a ser registada
+                    $final = emoji_badwords($input); //filtrar mensagem
+                    echo $final; //echo da mensagem processada
 
-                    array_push($conversa, $final);
+                    array_push($conversa, $final); //junção da mensagem ao array existente
 
-                    //$conversa = $conversa . $final;
-                    $send = $cls . "|------------------------------|\n";
-                    $ze = array_reverse($conversa);
+                    $send = $cls . "|------------------------------|\n"; //Inicio da string a ser enviada ao cliente
+                    $ze = array_reverse($conversa); //reverso do array
                     if (sizeof($conversa) <= 20) {
                         for ($a = 0; $a < sizeof($conversa);$a++) {
                             $send = $send . $conversa[$a];
@@ -253,19 +257,19 @@ while ($sair !=true) {
                         }
                     }
                 }
-                $send= $send."|______________________________|\n";
-                socket_write($spawn[$i], $send, 9080);
-                socket_close($spawn[$i]);
+                $send= $send."|______________________________|\n"; //fim da mensagem
+                socket_write($spawn[$i], $send, 9080); //envio da mensagem ao cliente
+                socket_close($spawn[$i]); //fechar socke
             }
             socket_close($sock);
-//socket_shutdown($sock);
-            break;
+            //socket_shutdown($sock);
+            break; //Fim do ciclo TCP
 
-        case 3:
+        case 3: //Caso o utilizador queira sair
             $sair = true;
             break;
 
-        default:
+        default: //Escolha default
             $protocolo = protocolo();
             break;
     }
