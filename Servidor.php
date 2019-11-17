@@ -96,6 +96,12 @@ function emoji_badwords($str) //Filtro BadWords
         else if($str_explode[$i] == "cabrão"){
             $str_explode[$i] = "c....o(BadWord)";
         }
+        else if($str_explode[$i] == "fds"){
+            $str_explode[$i] = "f.s(BadWord)";
+        }
+        else if($str_explode[$i] == "fodasse"){
+            $str_explode[$i] = "f.....e(BadWord)";
+        }
 
         $output=$output.$str_explode[$i]." ";
     }
@@ -127,139 +133,154 @@ while ($sair !=true) { //Inicio do Ciclo do Programa
             echo "\n\nA agurdar por transmissão ... \n";
             while (1)
             {
-                $input = socket_recvfrom($sock,$buf,512,0,$ip,$port); //Receber pacotes do cliente
-                if($buf=="r"){ //caso o cliente queira dar refresh a sua tela
-                    $send = $cls . "|------------------------------|\n"; //Inicio da sting da mensagem
-                    $ze = array_reverse($conversa); //reverse ao array conversa
-                    if (sizeof($conversa) < 20) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
-                        }
-                    }else{
-                        for ($a = 20; $a >= 0;$a--) {
-                            $send = $send . $ze[$a];
-                        }
-                    }
-                }
-                if($buf=="b"){ //Caso o cliente queira voltar atras na conversa
-                    $send = $cls . "|------------------------------|\n";
-                    $ze = array_reverse($conversa);
-                    if (sizeof($conversa) < 25) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
-                        }
-                    }else{
-                        for ($a = 25; $a >= 5;$a--) {
-                            $send = $send . $ze[$a];
+                try{
+                    $input = socket_recvfrom($sock,$buf,512,0,$ip,$port); //Receber pacotes do cliente
+                    if($buf=="r"){ //caso o cliente queira dar refresh a sua tela
+                        $send = $cls . "|------------------------------|\n"; //Inicio da sting da mensagem
+                        $ze = array_reverse($conversa); //reverse ao array conversa
+                        if (sizeof($conversa) < 20) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a];
+                            }
+                        }else{
+                            for ($a = 20; $a >= 0;$a--) {
+                                $send = $send . $ze[$a];
+                            }
                         }
                     }
-                }
-                elseif($buf=="close"){ //Caso o cliente queira fechar o servidor
-                    $sv="b";
-                    $sair=true;
-                    socket_sendto($sock,"servidor encerrado\n", 100,0,$ip,$port);
-                }
-                else { //Caso o cliente envie uma mensagem
-                    $final = emoji_badwords($buf); //filtrar mensagem
-                    echo $final; //echo da mensagem
 
-                    array_push($conversa, $final); //Junção da mensagem ao historico
-
-                    $send = $cls . "|------------------------------|\n";
-                    $ze = array_reverse($conversa);
-                    if (sizeof($conversa) <= 20) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
-                        }
-
-
-                    }else{
-                        for ($a = 20; $a >= 0;$a--) {
-                            $send = $send . $ze[$a];
+                    if($buf=="b"){ //Caso o cliente queira voltar atras na conversa
+                        $send = $cls . "|------------------------------|\n";
+                        $ze = array_reverse($conversa);
+                        if (sizeof($conversa) < 25) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a];
+                            }
+                        }else{
+                            for ($a = 25; $a >= 5;$a--) {
+                                $send = $send . $ze[$a];
+                            }
                         }
                     }
+                    elseif($buf=="close"){ //Caso o cliente queira fechar o servidor
+                        $sv="b";
+                        $sair=true;
+                        socket_sendto($sock,"servidor encerrado\n", 100,0,$ip,$port);
+                    }
+                    else { //Caso o cliente envie uma mensagem
+                        $final = emoji_badwords($buf); //filtrar mensagem
+                        echo $final; //echo da mensagem
+
+                        array_push($conversa, $final); //Junção da mensagem ao historico
+
+                        $send = $cls . "|------------------------------|\n";
+                        $ze = array_reverse($conversa);
+                        if (sizeof($conversa) <= 20) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a];
+                            }
+
+
+                        }else{
+                            for ($a = 20; $a >= 0;$a--) {
+                                $send = $send . $ze[$a];
+                            }
+                        }
+                    }
+                    $send= $send."|______________________________|\n"; //finalização da mensagem
+                    socket_sendto($sock,$send, strlen($send),0,$ip,$port); //Envio da mensagem final para o cliente
+                } catch (Exception $ex){
+                    echo $ex;
                 }
-                $send= $send."|______________________________|\n"; //finalização da mensagem
-                socket_sendto($sock,$send, strlen($send),0,$ip,$port); //Envio da mensagem final para o cliente
             }
             socket_close($sock); //Fechar o spcket
             //socket_shutdown($sock);
             break;//acaba o ciclo UDP
 
         case 2: //Caso o Protocolo seja TCP
-            $sock = socket_CreateBind($protocolo,$ip,$port); //Criação do bind
 
-            if(($ret = socket_listen($sock,4))<0){ //verificação da ligação
-                echo "socket_listen() ERRO :".socket_strerror($ret)."\n";
-            } else{
-                echo "socket listen OK\n";
+            try{
+
+                $sock = socket_CreateBind($protocolo,$ip,$port); //Criação do bind
+
+                if(($ret = socket_listen($sock,4))<0){ //verificação da ligação
+                    echo "socket_listen() ERRO :".socket_strerror($ret)."\n";
+                } else{
+                    echo "socket listen OK\n";
+                }
+                echo "\nIP: ".$ip;
+                echo "\nPorta: ".$port;
+                echo "\n\n«« Servidor à espera de ligações »» \n";
+            } catch(Exception $ex){
+                echo $ex;
             }
-            echo "\nIP: ".$ip;
-            echo "\nPorta: ".$port;
-            echo "\n\n«« Servidor à espera de ligações »» \n";
             while($sv=="a")
             {
-                $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming connection\n"); //Verificação da conexão ao client
-                $input = socket_read($spawn[$i],1024); //Recebimento da mensagem do utilizador
-                if($input=="r"){ //caso o utilizador queira somente dar refresh a sua tela
-                    $send = $cls . "|------------------------------|\n"; //Inicio da sting que sera enviada ao cliente
-                    $ze = array_reverse($conversa);
-                    if (sizeof($conversa) < 20) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a]; //concactenação da sting que sera enviada ao cliente
-                        }
+                try{
+                    $spawn[++$i] = socket_accept($sock) or die("Could not accept incoming connection\n"); //Verificação da conexão ao client
+                    $input = socket_read($spawn[$i],1024); //Recebimento da mensagem do utilizador
+                    if($input=="r"){ //caso o utilizador queira somente dar refresh a sua tela
+                        $send = $cls . "|------------------------------|\n"; //Inicio da sting que sera enviada ao cliente
+                        $ze = array_reverse($conversa);
+                        if (sizeof($conversa) < 20) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a]; //concactenação da sting que sera enviada ao cliente
+                            }
 
 
-                    }else{
-                        for ($a = 20; $a >= 0;$a--) {
-                            $send = $send . $ze[$a];
-                        }
-                    }
-                }
-                elseif($input=="b"){ //caso o utilizador queira verificar o historico da conversa
-                    $send = $cls . "|------------------------------|\n";//Inicio da sting que sera enviada ao cliente
-                    $ze = array_reverse($conversa);
-                    if (sizeof($conversa) < 25) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];//concactenação da sting que sera enviada ao cliente
-                        }
-
-
-                    }else{
-                        for ($a = 25; $a >= 5;$a--) {
-                            $send = $send . $ze[$a];
+                        }else{
+                            for ($a = 20; $a >= 0;$a--) {
+                                $send = $send . $ze[$a];
+                            }
                         }
                     }
-                }
-                elseif($input=="close"){ //caso o cliente queira fechar o cliente
-                    $sv="b";
-                    $sair=true;
-                    socket_write($spawn[$i], "servidor encerrado\n", 9080);
-                }
-
-                else { //caso o utilizador envie uma mensgaem a ser registada
-                    $final = emoji_badwords($input); //filtrar mensagem
-                    echo $final; //echo da mensagem processada
-
-                    array_push($conversa, $final); //junção da mensagem ao array existente
-
-                    $send = $cls . "|------------------------------|\n"; //Inicio da string a ser enviada ao cliente
-                    $ze = array_reverse($conversa); //reverso do array
-                    if (sizeof($conversa) <= 20) {
-                        for ($a = 0; $a < sizeof($conversa);$a++) {
-                            $send = $send . $conversa[$a];
-                        }
+                    elseif($input=="b"){ //caso o utilizador queira verificar o historico da conversa
+                        $send = $cls . "|------------------------------|\n";//Inicio da sting que sera enviada ao cliente
+                        $ze = array_reverse($conversa);
+                        if (sizeof($conversa) < 25) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a];//concactenação da sting que sera enviada ao cliente
+                            }
 
 
-                    }else{
-                        for ($a = 20; $a >= 0;$a--) {
-                            $send = $send . $ze[$a];
+                        }else{
+                            for ($a = 25; $a >= 5;$a--) {
+                                $send = $send . $ze[$a];
+                            }
                         }
                     }
-                }
+                    elseif($input=="close"){ //caso o cliente queira fechar o cliente
+                        $sv="b";
+                        $sair=true;
+                        socket_write($spawn[$i], "servidor encerrado\n", 9080);
+                    }
+
+                    else { //caso o utilizador envie uma mensgaem a ser registada
+                        $final = emoji_badwords($input); //filtrar mensagem
+                        echo $final; //echo da mensagem processada
+
+                        array_push($conversa, $final); //junção da mensagem ao array existente
+
+                        $send = $cls . "|------------------------------|\n"; //Inicio da string a ser enviada ao cliente
+                        $ze = array_reverse($conversa); //reverso do array
+                        if (sizeof($conversa) <= 20) {
+                            for ($a = 0; $a < sizeof($conversa);$a++) {
+                                $send = $send . $conversa[$a];
+                            }
+
+
+                        }else{
+                            for ($a = 20; $a >= 0;$a--) {
+                                $send = $send . $ze[$a];
+                            }
+                        }
+                    }
                 $send= $send."|______________________________|\n"; //fim da mensagem
                 socket_write($spawn[$i], $send, 9080); //envio da mensagem ao cliente
                 socket_close($spawn[$i]); //fechar socke
+                } catch(Exception $ex){
+                    echo $ex;
+                }      
             }
             socket_close($sock);
             //socket_shutdown($sock);
