@@ -149,7 +149,7 @@ while ($sair !=true) { //Inicio do Ciclo do Programa
                         }
                     }
 
-                    if($buf=="b"){ //Caso o cliente queira voltar atras na conversa
+                    elseif($buf=="b"){ //Caso o cliente queira voltar atras na conversa
                         $send = $cls . "|------------------------------|\n";
                         $ze = array_reverse($conversa);
                         if (sizeof($conversa) < 25) {
