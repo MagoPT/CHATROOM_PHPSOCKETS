@@ -169,6 +169,7 @@ while ($sair !=true) { //Inicio do Ciclo do Programa
                     }
                     else { //Caso o cliente envie uma mensagem
                         $final = emoji_badwords($buf); //filtrar mensagem
+                        $final = "[".date("H:i:s")."]".$final;
                         echo $final; //echo da mensagem
 
                         array_push($conversa, $final); //Junção da mensagem ao historico
@@ -257,6 +258,7 @@ while ($sair !=true) { //Inicio do Ciclo do Programa
 
                     else { //caso o utilizador envie uma mensgaem a ser registada
                         $final = emoji_badwords($input); //filtrar mensagem
+                        $final = "[" . date("H:i:s") . "]".$final;
                         echo $final; //echo da mensagem processada
 
                         array_push($conversa, $final); //junção da mensagem ao array existente

@@ -69,7 +69,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
                     $recv = socket_recvfrom($socket,$buf,90800,0,$ip,$port); //Recebe os dados do servidor
                     echo $buf; //Echo da mensagem respondida do servidor
                     if($counter==0){ //Caso seja a primeira vez do ciclo UDP
-                        $send="[".date("H:i:s")."]".$User.":".$ticker; //Mesagem a dizer que o cliente deu join no server
+                        $send=$User.":".$ticker; //Mesagem a dizer que o cliente deu join no server
                         $counter++;
                     }
                     elseif ($input==$left){exit;} //caso o utilizador queira sair
@@ -77,6 +77,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
                         $input = readline("Tu: "); //Mensagem que será enviada ao servidor
                         if ($input == 'q') { //Comando para sair
                             $input = $left; //Mensagem que o cliente deixou o servidor
+                            $send = $User . ": " .$left;
                         }
                         elseif ($input=="r"){ //Comando a pedir uma atualização de tela
                             $send="r";
@@ -88,7 +89,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
                             $send="close";
                         }
                         else {
-                            $send = "[" . date("H:i:s") . "]" . $User . ": " . $input; //Mensagem a ser enviada em caso normal
+                            $send = $User . ": " . $input; //Mensagem a ser enviada em caso normal
                         }
                     }
                     if(socket_sendto($socket,$send,strlen($send),0,$ip,$port)<0) //Validação se a mensagem foi enviada com sucesso
@@ -126,7 +127,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
                         socket_write($socket,"close",1024);//Envio do pedido para fechar o servidor
                     }
                     elseif ($ticker=="q"){ //Comando para o utilizador sair
-                        socket_write($socket, "[" . date("H:i:s") . "]$User : $left", 1024);//Envio da mensagem de saida ao servidor
+                        socket_write($socket, "$User : $left", 1024);//Envio da mensagem de saida ao servidor
                         $sair=true;
                     }
                     elseif ($ticker=="r"){ //Comando para o servidor atualizar a tela do cliente
@@ -136,7 +137,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
                         socket_write($socket,"b",1024);//Envio do pedido de historico ao servidor
                     }
                     else{ //Caso seja uma mensagem normal
-                        socket_write($socket, "[" . date("H:i:s") . "]$User : $ticker", 1024); //Envio da mensagem ao servidor
+                        socket_write($socket, "$User : $ticker", 1024); //Envio da mensagem ao servidor
                     }
 
                     $c=false;
@@ -161,7 +162,7 @@ while ($protocolo != 4) { //Caso o utilizador não queira sair
             echo "Controles para a chatroom 'Os Laneiros': \n";
             echo "      -q: desliga o cliente\n";
             echo "  -close: desliga o servidor\n";
-            echo " -reload: recarrega o chat\n";
+            echo "       -: recarrega o chat\n";
             readline("Prima enter:");
             echo $cls;
             $protocolo = protocolo();
