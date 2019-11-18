@@ -7,6 +7,7 @@ O ChatRoom PHP é um projeto Open Source desenvolvido no âmbito académico com 
 Não faz a gestão de vários clientes e não tem sincronização assíncrona
 
 **Comandos Reconhecidos**
+
     -r -- Reload de tela
     -b -- Volta 5 mensagens atrás
     -q -- desliga o cliente
