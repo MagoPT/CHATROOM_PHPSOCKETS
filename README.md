@@ -13,7 +13,7 @@ Não faz a gestão de vários clientes e não tem sincronização assíncrona
     -q -- desliga o cliente
     -close -- desliga o servidor
 
-**Obejtivos Iniciais**
+**Objetivos Iniciais**
 
 Projeto de implementação - comunicação cliente - servidor(sockets)
 -> Implementar em PHP uma sala de chat segundo as seguintes especificações:
