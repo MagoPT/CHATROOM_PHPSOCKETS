@@ -21,7 +21,7 @@ Projeto de implementação - comunicação cliente - servidor(sockets)
 	Especificações do projeto
 	
     - O servidor deve permitir a escolha do protocolo a utilizar bem como a porta de comunicação
-    Objetivo não concluido : O servidor deve aceitar um máximo de 10 conexões em simultâneo, rejeitando as seguintes
+    Objetivo não concluidos: O servidor deve aceitar um máximo de 10 conexões em simultâneo, rejeitando as seguintes
     - O servidor deve, para cada mensagem recebida, mostrar na sua janela a atualização do estado das
     mensagens no chat, bem como enviar a todos os utilizadores registados a nova msg
     - Todos os clientes devem receber uma mensagem de boas vindas
